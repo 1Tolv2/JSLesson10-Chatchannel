@@ -62,7 +62,7 @@
         }
 
         function renderMessageItem(messageItem) {
-            messageListContainer.innerHTML = ""
+          // messageListContainer.innerHTML = ""
            const li = document.createElement("li")
            li.innerText = `${messageItem.message} - by: ${messageItem.author}`
               messageListContainer.appendChild(li)
@@ -80,6 +80,7 @@
         }
 
         function getMessageList(){
+          messageListContainer.innerHTML = ""
             fetch(url)
             .then(res => res.json())
             .then(data => {

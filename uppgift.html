@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head> </head>
+  <body>
+    <div>
+      <label for="chatChannelsList">Switch to a specific channel: </label>
+      <select id="chatChannelsList"></select>
+      <button onClick="onChannelSwitchClick()">Switch</button>
+    </div>
+    <ul id="messageList"></ul>
+    <div>
+      <label for="author">Author </label>
+      <input id="author" />
+      <label for="message">Message </label>
+      <input id="message" />
+      <button onclick="handleOnClick()">Send</button>
+      <button onclick="getMessageList()">Refresh</button>
+    </div>
+    <script>
+      const urlChannels =
+        "https://mock-data-api.firebaseio.com/webb21-chats.json";
+
+      let username = ""; // Add a generic username here
+      let url = `https://mock-data-api.firebaseio.com/webb21-chats/${username}/messages.json`;
+      const messageListContainer = document.getElementById("messageList");
+      const chatChannelsList = document.getElementById("chatChannelsList");
+
+      function updateChannelUrl(channelChosen) {
+        username = channelChosen
+        console.log(username)
+        url = `https://mock-data-api.firebaseio.com/webb21-chats/${username}/messages.json`;
+        getMessageList()
+      }
+
+      function onChannelSwitchClick() {
+        const channelChosenInput = document.getElementById("chatChannelsList")
+        
+        const channelChosen = channelChosenInput.value
+        updateChannelUrl(channelChosen)
+
+      }
+
+      function handleOnClick(){
+            const authorInput = document.getElementById("author")
+            const messageInput = document.getElementById("message")
+            const author = authorInput.value
+            const message = messageInput.value
+            sendMessage(author, message)
+
+        }
+
+        function sendMessage(author, message) {
+            const payload = {
+                author: author,
+                message: message,
+            }
+            fetch(url, {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                })
+        }
+
+        function renderMessageItem(messageItem) {
+            messageListContainer.innerHTML = ""
+           const li = document.createElement("li")
+           li.innerText = `${messageItem.message} - by: ${messageItem.author}`
+              messageListContainer.appendChild(li)
+        }
+
+        function renderMessageList(data){
+            console.log(data)
+
+            // gör om objectet till en array
+            Object.entries(data).forEach(item => {
+                console.log(item)
+                const messageItem = item[1]
+                renderMessageItem(messageItem)
+            }); 
+        }
+
+        function getMessageList(){
+            fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                renderMessageList(data)
+            })
+        }
+
+      function renderChatChannel(channel) {
+        const option = document.createElement("option");
+        option.innerHTML = `${channel}`;
+        chatChannelsList.appendChild(option);
+      }
+
+      function renderChatChannelsList(data) {
+        Object.entries(data).forEach((item) => {
+          const channel = item[0];
+          renderChatChannel(channel);
+        });
+      }
+
+      function getChatChannelsList() {
+        fetch(urlChannels)
+          .then((res) => res.json())
+          .then((data) => {
+            renderChatChannelsList(data);
+          });
+      }
+      getChatChannelsList();
+      getMessageList();
+    </script>
+  </body>
+</html>

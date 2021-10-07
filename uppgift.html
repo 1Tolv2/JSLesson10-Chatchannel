@@ -50,11 +50,11 @@
         }
 
         function sendMessage(author, message) {
-            const payload = {
+            const payload = { //constructs the message to send to the API
                 author: author,
                 message: message,
             }
-            fetch(url, {
+            fetch(url, { // sends the message
                     method: "POST",
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
@@ -62,16 +62,16 @@
         }
 
         function renderMessageItem(messageItem) {
-          // messageListContainer.innerHTML = ""
            const li = document.createElement("li")
            li.innerText = `${messageItem.message} - by: ${messageItem.author}`
               messageListContainer.appendChild(li)
         }
 
         function renderMessageList(data){
+          messageListContainer.innerHTML = "" //empties the list before rendering again
             console.log(data)
 
-            // gör om objectet till en array
+            // converts the objects to arrays
             Object.entries(data).forEach(item => {
                 console.log(item)
                 const messageItem = item[1]
@@ -80,7 +80,6 @@
         }
 
         function getMessageList(){
-          messageListContainer.innerHTML = ""
             fetch(url)
             .then(res => res.json())
             .then(data => {
